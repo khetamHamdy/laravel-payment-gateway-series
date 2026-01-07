@@ -7,4 +7,4 @@ The architecture is **gateway-agnostic**, meaning you can implement any payment 
 To use this repository, clone it locally using:
 
 ```bash
-git clone https://github.com/your-username/laravel-payment-gateway-series.git
+git clone https://github.com/khetamHamdy/laravel-payment-gateway-series.git
