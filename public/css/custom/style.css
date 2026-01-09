@@ -1,0 +1,125 @@
+/* Enhanced Select */
+.custom-select-enhanced {
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.custom-select-enhanced:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25); /* Bootstrap success */
+}
+
+.custom-select-enhanced option {
+    padding: 6px 12px;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 400;
+    font-size: 14px;
+    color: #212529;
+}
+
+.custom-select-enhanced option:hover,
+.custom-select-enhanced option:focus {
+    background-color: #f8f9fa;
+}
+
+.custom-select-wrapper {
+    position: relative;
+}
+
+/* toastr */
+.toast-top-left {
+    top: 82px !important;
+    left: 24px !important;
+}
+
+/* صندوق اختيار الوسائط */
+.btn-file-upload .media-tile-trigger {
+    height: 180px; /* عدّل الارتفاع حسب ذوقك */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #0e131a; /* داكن */
+    color: #cdd3da;
+    border: 2px dashed #49525c; /* حد متقطّع */
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: 0.15s ease-in-out;
+    text-align: center;
+}
+.btn-file-upload .media-tile-trigger .ph {
+    font-size: 42px;
+    opacity: 0.9;
+}
+.btn-file-upload .media-tile-trigger:hover {
+    background-color: #0f1721;
+    border-color: #64707d;
+    color: #e7ecf2;
+}
+.btn-file-upload .media-tile-trigger:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border-color: #6ea8fe;
+}
+
+/* نخفي حقل النص داخل الـ input-group (لو تبغاه يظهر، شيل السطرين تحت) */
+.media-hidden-text {
+    display: none !important;
+    pointer-events: none;
+}
+
+/* معاينة الصور المختارة */
+.uploaded-image {
+    margin-top: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+}
+.uploaded-image .thumb {
+    position: relative;
+    border-radius: 0.75rem;
+    background: #0b1218;
+    border: 1px solid var(--bs-border-color, #2a323b);
+    overflow: hidden;
+}
+.uploaded-image .thumb img {
+    width: 100%;
+    height: 140px; /* عدّلها حسب ما تحب */
+    object-fit: cover;
+    display: block;
+}
+.uploaded-image .thumb .remove-btn {
+    position: absolute;
+    inset-inline-end: 0.5rem; /* يدعم RTL */
+    inset-block-start: 0.5rem;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+.uploaded-image .thumb .thumb-caption {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.875rem;
+    color: #c8ced6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    direction: rtl;
+}
+
+.text-left{
+    text-align: left;
+}

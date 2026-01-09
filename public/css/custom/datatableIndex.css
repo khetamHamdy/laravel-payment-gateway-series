@@ -1,0 +1,596 @@
+/* ===== Enhanced DataTable CSS ===== */
+
+/* الخطوط والتخطيط العام */
+body {
+    font-family: 'Almarai', sans-serif !important;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    color: #2c3e50;
+}
+
+/* الحاوي الرئيسي */
+.main-content {
+    margin: 15px 0 0 0 !important;
+}
+
+.main-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    margin: 20px;
+    transition: all 0.3s ease;
+}
+
+.main-container:hover {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* بطاقة الجدول المحسنة */
+.enhanced-card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(229, 9, 20, 0.1);
+    overflow: hidden;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    transition: all 0.3s ease;
+}
+
+.enhanced-card-body {
+    padding: 0;
+    background: transparent;
+}
+
+/* عنوان الجدول */
+.table-header-title {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 20px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.table-header-title::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%);
+    transition: left 0.6s;
+}
+
+.table-header-title:hover::before {
+    left: 100%;
+}
+
+/* تحسينات DataTable الأساسية */
+table.dataTable th:not(.sticky) {
+    position: relative !important;
+}
+
+table.dataTable th,
+table.dataTable td {
+    box-sizing: content-box !important;
+    white-space: nowrap !important;
+}
+
+tbody td {
+    padding: 2px 5px !important;
+    color: #2c3e50 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease;
+}
+
+/* إخفاء عناصر غير مرغوب فيها */
+.breadcrumb {
+    display: none !important;
+}
+
+.dt-layout-row {
+    margin: 0 !important;
+}
+
+.dt-search {
+    display: none !important;
+}
+
+/* تعطيل مؤشر الفرز */
+th.no-sort::after {
+    display: none !important;
+}
+
+/* أزرار التصفية المحسنة */
+.filter-dropdown {
+    display: block;
+    position: absolute;
+    bottom: -2px;
+    left: 2px;
+}
+
+.enhanced-filter-dropdown {
+    position: relative;
+}
+
+.enhanced-btn-filter {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: white;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(5px);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.enhanced-btn-filter:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.enhanced-btn-filter:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* قوائم التصفية المحسنة */
+.enhanced-filter-menu {
+    background: white;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    min-width: 280px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+table .dropdown-menu.show {
+    width: 280px;
+}
+
+/* حقل البحث في التصفية */
+.enhanced-filter-menu .search-checkbox {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    width: 70% !important;
+    margin: 0 !important;
+    background: #f8f9fa;
+}
+
+.enhanced-filter-menu .search-checkbox:focus {
+    border-color: #e50914;
+    box-shadow: 0 0 0 0.2rem rgba(229, 9, 20, 0.15);
+    outline: none;
+    background: white;
+}
+
+.enhanced-filter-menu .search-checkbox::placeholder {
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* زر التطبيق */
+.enhanced-apply-btn {
+    background: linear-gradient(135deg, #e50914 0%, #b8070f 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.enhanced-apply-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+    background: linear-gradient(135deg, #c7080e 0%, #9e060a 100%);
+}
+
+.enhanced-apply-btn:active {
+    transform: translateY(0);
+}
+
+/* قائمة الخيارات */
+.enhanced-checkbox-list {
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(248, 249, 250, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.enhanced-checkbox-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.enhanced-checkbox-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.enhanced-checkbox-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #e50914 0%, #b8070f 100%);
+    border-radius: 3px;
+}
+
+.enhanced-checkbox-list label {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-weight: 500;
+    color: #495057;
+    font-size: 14px;
+}
+
+.enhanced-checkbox-list label:hover {
+    background: linear-gradient(135deg, rgba(229, 9, 20, 0.1) 0%, rgba(229, 9, 20, 0.05) 100%);
+    color: #e50914;
+    transform: translateX(3px);
+}
+
+.enhanced-checkbox-list input[type="checkbox"] {
+    margin-left: 10px;
+    transform: scale(1.2);
+    accent-color: #e50914;
+    cursor: pointer;
+}
+
+/* أزرار العمليات */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+}
+
+.btn-edit:hover {
+    background: linear-gradient(135deg, #138496 0%, #10707f 100%);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(23, 162, 184, 0.4);
+    color: white;
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.btn-delete:hover {
+    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    color: white;
+}
+
+.action-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-icon {
+    padding: 5px !important;
+}
+
+/* شارات الحالة */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.3s ease;
+}
+
+.status-active {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+}
+
+.status-active:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+/* صور المستخدمين */
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #e50914;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.user-avatar:hover {
+    transform: scale(1.1);
+    border-color: #b8070f;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* تحسينات عامة */
+.organization {
+    width: 130px !important;
+    overflow: hidden;
+    display: block;
+    transition: all 0.5s ease-in-out;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.organization:hover {
+    width: 100% !important;
+}
+
+/* تحسينات الاستجابة */
+@media (max-width: 1200px) {
+    .main-container {
+        margin: 15px;
+        border-radius: 15px;
+    }
+
+    .table-header-title {
+        font-size: 16px;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        margin: 10px;
+        border-radius: 15px;
+    }
+
+    .enhanced-filter-menu {
+        min-width: 250px;
+        padding: 15px;
+    }
+
+    .action-buttons {
+        gap: 6px;
+    }
+
+    .action-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+    }
+
+    .status-badge {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-container {
+        margin: 5px;
+        border-radius: 10px;
+    }
+
+    .table-header-title {
+        font-size: 14px;
+        padding: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .enhanced-filter-menu {
+        min-width: 220px;
+        padding: 10px;
+    }
+
+    .user-avatar {
+        width: 30px;
+        height: 30px;
+    }
+
+    .action-buttons {
+        gap: 4px;
+    }
+
+    .action-btn {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+
+    .status-badge {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+}
+
+/* تأثيرات الحركة المتقدمة */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounceIn {
+    0%, 20%, 40%, 60%, 80% {
+        transform: translateY(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateY(-10px);
+    }
+}
+
+.enhanced-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.enhanced-btn-filter:hover {
+    animation: bounceIn 0.6s ease-in-out;
+}
+
+/* تأثيرات الانتقال السلس */
+* {
+    transition-property: transform, box-shadow, background, border-color, color;
+    transition-duration: 0.3s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* تحسينات الأداء */
+.main-container,
+.enhanced-card,
+.table-container {
+    will-change: transform;
+}
+
+/* إضافة تأثير الضوء المتحرك */
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.enhanced-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+    );
+    z-index: 1;
+    animation: shimmer 3s infinite;
+    pointer-events: none;
+}
+
+/* تحسينات إضافية للألوان والظلال */
+:root {
+    --primary-red: #e50914;
+    --primary-red-dark: #b8070f;
+    --primary-red-darker: #8a0509;
+    --text-primary: #2c3e50;
+    --text-secondary: #6c757d;
+    --background-light: #f8f9fa;
+    --border-light: rgba(0, 0, 0, 0.05);
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.15);
+    --shadow-heavy: rgba(0, 0, 0, 0.25);
+}
+
+/* استخدام المتغيرات في التصميم */
+.enhanced-btn-filter {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.enhanced-apply-btn {
+    background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
+    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+}
+
+.status-active {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+}
+
+/* تحسينات للطباعة */
+@media print {
+    .enhanced-filter-dropdown,
+    .action-buttons {
+        display: none !important;
+    }
+
+    .main-container {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+
+    table.enhanced-sticky {
+        height: auto;
+        display: table;
+    }
+
+    .table-header-title {
+        background: #000 !important;
+        color: white !important;
+    }
+}

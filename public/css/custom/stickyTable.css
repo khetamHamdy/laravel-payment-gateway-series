@@ -1,0 +1,287 @@
+/* ===== Enhanced Sticky Table CSS ===== */
+
+/* الحاوي الرئيسي للجدول */
+.table-container {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+/* الجدول المحسن */
+table.enhanced-sticky {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    display: block;
+    overflow: auto;
+    height: 500px;
+    font-size: 14px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* رأس الجدول المحسن */
+table.enhanced-sticky thead {
+    background: linear-gradient(135deg, #e50914 0%, #b8070f 50%, #8a0509 100%);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+}
+
+table.enhanced-sticky thead th {
+    font-weight: 800 !important;
+    color: white !important;
+    text-align: center !important;
+    padding: 18px 12px;
+    border: none;
+    white-space: nowrap;
+    position: relative;
+    background: transparent;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+/* تأثيرات الحواف لرأس الجدول */
+table.enhanced-sticky thead th:first-child {
+    border-top-right-radius: 15px;
+}
+
+table.enhanced-sticky thead th:last-child {
+    border-top-left-radius: 15px;
+}
+
+/* فواصل بين الأعمدة في الرأس */
+table.enhanced-sticky thead th:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: linear-gradient(to bottom,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%);
+}
+
+/* تأثير التفاعل مع رأس الجدول */
+table.enhanced-sticky thead th:hover {
+    background: linear-gradient(135deg, #c7080e 0%, #9e060a 50%, #750408 100%);
+    transform: translateY(-1px);
+}
+
+/* محتوى الجدول */
+table.enhanced-sticky tbody {
+    display: table-row-group;
+    background: white;
+    min-height: calc(100vh - 219px);
+}
+
+table.enhanced-sticky tbody tr {
+    display: table-row;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* تأثير التمرير على الصفوف */
+table.enhanced-sticky tbody tr:hover {
+    background: linear-gradient(90deg,
+        rgba(229, 9, 20, 0.02) 0%,
+        rgba(229, 9, 20, 0.05) 50%,
+        rgba(229, 9, 20, 0.02) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* خلايا الجدول */
+table.enhanced-sticky tbody td {
+    padding: 15px 12px;
+    font-weight: 600;
+    color: #2c3e50;
+    white-space: nowrap;
+    border: none;
+    text-align: center;
+    position: relative;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+/* الصفوف النشطة */
+tbody tr.table-active {
+    background: linear-gradient(135deg,
+        rgba(229, 9, 20, 0.08) 0%,
+        rgba(229, 9, 20, 0.03) 100%) !important;
+    box-shadow: 0 2px 10px rgba(229, 9, 20, 0.15);
+}
+
+/* الخلايا النشطة */
+td.active {
+    background: linear-gradient(135deg,
+        rgba(229, 9, 20, 0.1) 0%,
+        rgba(229, 9, 20, 0.05) 100%) !important;
+    border: 2px solid rgba(229, 9, 20, 0.3);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(229, 9, 20, 0.2);
+    position: relative;
+}
+
+/* العمود المثبت (sticky) */
+th.enhanced-sticky,
+td.enhanced-sticky {
+    position: sticky;
+    right: 0;
+    z-index: 5;
+    border-right: 3px solid rgba(229, 9, 20, 0.3);
+}
+
+th.enhanced-sticky {
+    background: linear-gradient(135deg, #e50914 0%, #b8070f 100%) !important;
+    box-shadow: -5px 0 15px rgba(229, 9, 20, 0.2);
+}
+
+td.enhanced-sticky {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+    box-shadow: -3px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* تأثيرات التمرير المخصصة */
+.table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: linear-gradient(45deg, #f1f1f1 0%, #e9ecef 100%);
+    border-radius: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #e50914 0%, #b8070f 100%);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #b8070f 0%, #8a0509 100%);
+    background-clip: content-box;
+}
+
+.table-container::-webkit-scrollbar-corner {
+    background: #f1f1f1;
+}
+
+/* تحسينات الاستجابة للجدول */
+@media (max-width: 1200px) {
+    table.enhanced-sticky {
+        height: 450px;
+        font-size: 13px;
+    }
+
+    table.enhanced-sticky thead th {
+        padding: 15px 10px;
+        font-size: 14px;
+    }
+
+    table.enhanced-sticky tbody td {
+        padding: 12px 10px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    table.enhanced-sticky {
+        height: 400px;
+        font-size: 12px;
+    }
+
+    table.enhanced-sticky thead th {
+        padding: 12px 8px;
+        font-size: 13px;
+        letter-spacing: 0.3px;
+    }
+
+    table.enhanced-sticky tbody td {
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+
+    .table-container {
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    table.enhanced-sticky {
+        height: 350px;
+        font-size: 11px;
+    }
+
+    table.enhanced-sticky thead th {
+        padding: 10px 6px;
+        font-size: 12px;
+    }
+
+    table.enhanced-sticky tbody td {
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+}
+
+/* تأثيرات الحركة المتقدمة */
+@keyframes tableRowSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+table.enhanced-sticky tbody tr {
+    animation: tableRowSlideIn 0.3s ease-out;
+}
+
+/* تأثير النبض للخلايا النشطة */
+@keyframes activePulse {
+    0% {
+        box-shadow: 0 4px 12px rgba(229, 9, 20, 0.2);
+    }
+    50% {
+        box-shadow: 0 6px 20px rgba(229, 9, 20, 0.3);
+    }
+    100% {
+        box-shadow: 0 4px 12px rgba(229, 9, 20, 0.2);
+    }
+}
+
+td.active {
+    animation: activePulse 2s infinite;
+}
+
+/* تحسينات إضافية للأداء */
+table.enhanced-sticky * {
+    box-sizing: border-box;
+}
+
+/* تأثير الظل المتدرج للرأس */
+table.enhanced-sticky thead th::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%,
+        rgba(0, 0, 0, 0.1) 100%);
+    pointer-events: none;
+}
