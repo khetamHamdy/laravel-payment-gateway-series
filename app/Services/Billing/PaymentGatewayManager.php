@@ -2,7 +2,7 @@
 
 namespace App\Services\Payment;
 
-use App\Services\Payment\Contracts\PaymentGatewayInterface;
+use App\Services\Billing\Contracts\PaymentGatewayInterface;
 use Illuminate\Http\Request;
 
 class PaymentGatewayManager

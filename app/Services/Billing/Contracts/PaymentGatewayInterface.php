@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Payment\Contracts;
+namespace App\Services\Billing\Contracts;
 
 use Illuminate\Http\Request;
 
