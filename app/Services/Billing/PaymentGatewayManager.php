@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Payment;
+namespace App\Services\Billing;
 
-use App\Services\Payment\Contracts\PaymentGatewayInterface;
+use App\Services\Billing\Contracts\PaymentGatewayInterface;
 use Illuminate\Http\Request;
 
 class PaymentGatewayManager

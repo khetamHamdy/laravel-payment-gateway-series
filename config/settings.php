@@ -7,4 +7,5 @@ return [
         'default_gateway' => env('PAYMENT_DEFAULT_GATEWAY', 'paylink'),
         'test_mode' => env('PAYMENT_TEST_MODE', true),
     ],
+
 ];
