@@ -170,11 +170,14 @@ class PaylinkGateway implements PaymentGatewayInterface
                 strtolower($data['orderStatus'] ?? ''),
                 ['paid', 'success', 'completed']
             ),
+            'order_number'   => $data['orderNumber'] ?? null, // تأكدي أن الاسم order_number
             'reference' => $data['orderNumber'] ?? null,
             'transaction_id' => $data['transactionNo'] ?? null,
             'status' => $data['orderStatus'] ?? null,
             'gateway' => 'paylink',
             'raw' => $data,
+            'error_message'  => $data['orderStatus'] ?? 'Payment Failed', // إضافة رسالة خطأ
+            'raw_data'       => $data, // تأكدي أن الاسم raw_data
         ];
     }
 
