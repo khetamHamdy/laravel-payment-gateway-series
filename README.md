@@ -1,10 +1,68 @@
-# 🚀 Laravel Payment Gateway Series
+# Paylink Payment Gateway Integration (Laravel) 💳
 
-Welcome to the **Laravel Payment Gateway Series**, a professional and educational journey into integrating **multiple payment gateways** using **REST APIs** in Laravel. This repository provides **clean, reusable, and scalable code** that can be adapted to **any payment gateway**, making it perfect for **real-world projects** and **hands-on learning**. Many developers feel intimidated by payment integrations, but fear comes from lack of experience 💡. This series emphasizes **learning by doing**, showing that with practice and small steps, anyone can confidently handle payments in Laravel projects.
+هذا المستودع يوضح **طريقة ربط بوابة الدفع Paylink** في إطار عمل Laravel بطريقة منظمة، بسيطة، وقابلة للتوسعة لاحقًا.
 
-The architecture is **gateway-agnostic**, meaning you can implement any payment provider such as **Stripe, Paylink, Telr, or others** without changing the core logic. The `PaymentGatewayManager` class acts as a **central hub** that dynamically resolves the active gateway, delegates **checkout creation**, and handles **webhook requests**. Each gateway implementation lives in the `Gateways` folder, while the `Contracts` folder contains the interface defining the contract for all gateways. This ensures a **clean, maintainable, and extensible structure** suitable for multiple projects and long-term use.
+> **⚠️ تنبيه:** هذا العمل مخصص للتجربة والتعليم وليس تطبيقًا نهائيًا للإنتاج (Production).
 
-To use this repository, clone it locally using:
+---
 
-```bash
-git clone https://github.com/khetamHamdy/laravel-payment-gateway-series.git
+## 📌 الهدف من هذا المشروع
+* شرح هيكلة بوابة دفع بطريقة صحيحة (Best Practices).
+* فصل منطق الدفع عن الكنترولر (Separation of Concerns).
+* تجهيز أساس قابل لإضافة بوابات دفع أخرى مستقبلاً.
+* تسهيل فهم تدفق الدفع (Payment Flow) لأي مطوّر.
+
+---
+
+## 🧠 الفكرة العامة (Architecture)
+التصميم مبني على مبدأ:  
+**Controller** ← **Gateway Service** ← **External API**
+
+* **Controller:** مسؤول فقط عن استقبال الطلب، تجهيز البيانات الأساسية، وإرجاع النتيجة.
+* **Gateway Service:** مسؤول عن الاتصال مع Paylink API، إنشاء الفاتورة، معالجة الـ Webhook، وتوحيد شكل الاستجابة.
+
+---
+
+## 🗂️ هيكلة الملفات (Structure)
+
+### 1️⃣ المسارات `routes/web.php`
+* `checkout`: يبدأ عملية الدفع ويرسل الطلب لبوابة Paylink.
+* `webhook`: يستقبل رد Paylink التلقائي بعد إتمام أو فشل الدفع.
+
+### 2️⃣ المتحكم `PaymentTestController.php`
+**المسار:** `app/Http/Controllers/Payment/PaymentTestController.php`  
+يقتصر دوره على استدعاء الخدمة (Service) وتمرير البيانات، ولا يحتوي على أي منطق خاص بـ API.
+
+### 3️⃣ الخدمة `PaylinkGateway.php`
+**المسار:** `app/Services/Billing/Gateways/PaylinkGateway.php`  
+**المسؤوليات:**
+* التوثيق (Authenticate) مع API.
+* إنشاء الفاتورة (Invoice).
+* معالجة الـ Webhook وتوحيد الرد.
+
+### 4️⃣ ملف الإعدادات `config/payments.php`
+يستخدم لتنظيم الإعدادات ومنع استخدام `env()` مباشرة داخل الكود، مما يسهل التبديل بين وضع الاختبار والإنتاج.
+
+---
+
+## ⚙️ الإعدادات المطلوبة (Environment Variables)
+
+قم بإضافة المتغيرات التالية في ملف `.env`:
+
+```env
+PAYMENT_DEFAULT_GATEWAY=paylink
+PAYMENT_TEST_MODE=true
+
+PAYLINK_API_KEY=your_api_key_here
+PAYLINK_SECRET_KEY=your_secret_key_here
+PAYLINK_API_URL=[https://api.paylink.sa](https://api.paylink.sa)
+PAYLINK_SANDBOX_URL=[https://sandbox.paylink.sa](https://sandbox.paylink.sa)
+```
+
+---
+
+### 👩‍💻 تطوير وإعداد
+## بواسطة المبرمجة: ختام حمدي اخليل
+
+# صدقة جارية عن روح والدي الشهيد حمدي اخليل
+ اللهم ارحمه وتقبله في الشهداء واجعل مسكنه الفردوس الأعلى من الجنة
