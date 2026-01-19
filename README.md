@@ -1,64 +1,59 @@
-# Paylink Payment Gateway Integration (Laravel) 💳
+# Laravel Moyasar Payment Gateway Implementation 💳
 
-هذا المستودع يوضح **طريقة ربط بوابة الدفع Paylink** في إطار عمل Laravel بطريقة منظمة، بسيطة، وقابلة للتوسعة لاحقًا.
+![Laravel](https://img.shields.io/badge/Laravel-10.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Moyasar](https://img.shields.io/badge/Moyasar-API_V1-blue?style=for-the-badge)
 
-> **⚠️ تنبيه:** هذا العمل مخصص للتجربة والتعليم وليس تطبيقًا نهائيًا للإنتاج (Production).
-
----
-
-## 📌 الهدف من هذا المشروع
-* شرح هيكلة بوابة دفع بطريقة صحيحة (Best Practices).
-* فصل منطق الدفع عن الكنترولر (Separation of Concerns).
-* تجهيز أساس قابل لإضافة بوابات دفع أخرى مستقبلاً.
-* تسهيل فهم تدفق الدفع (Payment Flow) لأي مطوّر.
+مستودع تعليمي يوضح كيفية دمج بوابة دفع **Moyasar (ميسر)** في تطبيقات Laravel باستخدام بنية برمجية نظيفة (Clean Architecture) تعتمد على الـ **Service Pattern**.
 
 ---
 
-## 🧠 الفكرة العامة (Architecture)
-التصميم مبني على مبدأ:  
-**Controller** ← **Gateway Service** ← **External API**
+## 🚀 تدفق عملية الدفع (Payment Flow)
 
-* **Controller:** مسؤول فقط عن استقبال الطلب، تجهيز البيانات الأساسية، وإرجاع النتيجة.
-* **Gateway Service:** مسؤول عن الاتصال مع Paylink API، إنشاء الفاتورة، معالجة الـ Webhook، وتوحيد شكل الاستجابة.
+يعتمد هذا المشروع على هيكلية قوية تضمن أمان العمليات المالية عبر المراحل التالية:
 
----
 
-## 🗂️ هيكلة الملفات (Structure)
 
-### 1️⃣ المسارات `routes/web.php`
-* `checkout`: يبدأ عملية الدفع ويرسل الطلب لبوابة Paylink.
-* `webhook`: يستقبل رد Paylink التلقائي بعد إتمام أو فشل الدفع.
-
-### 2️⃣ المتحكم `PaymentTestController.php`
-**المسار:** `app/Http/Controllers/Payment/PaymentTestController.php`  
-يقتصر دوره على استدعاء الخدمة (Service) وتمرير البيانات، ولا يحتوي على أي منطق خاص بـ API.
-
-### 3️⃣ الخدمة `PaylinkGateway.php`
-**المسار:** `app/Services/Billing/Gateways/PaylinkGateway.php`  
-**المسؤوليات:**
-* التوثيق (Authenticate) مع API.
-* إنشاء الفاتورة (Invoice).
-* معالجة الـ Webhook وتوحيد الرد.
-
-### 4️⃣ ملف الإعدادات `config/payments.php`
-يستخدم لتنظيم الإعدادات ومنع استخدام `env()` مباشرة داخل الكود، مما يسهل التبديل بين وضع الاختبار والإنتاج.
+1.  **Checkout:** يتم إنشاء سجل دفع محلي بوضع `pending` في قاعدة البيانات، ثم طلب إنشاء فاتورة (Invoice) من ميسر.
+2.  **Redirection:** يتم توجيه العميل إلى رابط الفاتورة المولد من بوابة ميسر لإتمام عملية الدفع.
+3.  **Validation:** عند العودة (`Success Page`) أو عبر الـ `Webhook` يتم التحقق المباشر من سيرفر ميسر عبر الـ API قبل تحديث حالة الطلب لضمان عدم تلاعب المستخدم بالبيانات.
 
 ---
 
-## ⚙️ الإعدادات المطلوبة (Environment Variables)
+## 🛠️ المميزات التقنية (Technical Features)
 
-قم بإضافة المتغيرات التالية في ملف `.env`:
+* ✅ **Service-Oriented Architecture:** فصل منطق بوابة الدفع بالكامل داخل `MoyasarGateway` بعيداً عن الكنترولر.
+* ✅ **Database Transactions:** استخدام `DB::transaction` مع `lockForUpdate` عند تحديث حالة الدفع لمنع الـ Race Conditions.
+* ✅ **Double Verification:** التحقق من حالة الدفع عبر استدعاء API ميسر مباشرة من السيرفر (Server-to-Server) لضمان الأمان العالي.
+* ✅ **Robust Logging:** نظام تسجيل أحداث (Logging) دقيق لكل مرحلة من مراحل الدفع لتسهيل عملية التتبع (Debugging).
+
+---
+
+## 📂 الهيكل البرمجي (Key Components)
+
+### 1️⃣ المسارات (Routes)
+تم تنظيم المسارات باستخدام `prefix` لتسهيل الاختبار والوصول:
+* `GET /test/payment/checkout`: لبدء المعاملة وإنشاء الرابط.
+* `POST /test/payment/webhook/{gateway}`: لاستقبال الإشعارات التلقائية من ميسر.
+* `GET /test/payment/success`: لمعالجة عودة العميل وتأكيد حالة الدفع النهائية.
+
+### 2️⃣ المتحكم (PaymentTestController)
+المسؤول عن التنسيق بين واجهة المستخدم، الخدمة (Service)، وقاعدة البيانات، مع ضمان معالجة الأخطاء بشكل سليم.
+
+### 3️⃣ الخدمة (MoyasarGateway)
+المحرك الرئيسي الذي يتواصل مع API ميسر، ويقوم ببناء الـ Payload، ومعالجة الـ Webhooks، وتوحيد استجابة النظام.
+
+---
+
+## ⚙️ الإعدادات (.env)
+
+يتم جلب الإعدادات برمجياً من ملف `config/services.php`. تأكد من إضافة القيم التالية في ملف الـ `.env`:
 
 ```env
-PAYMENT_DEFAULT_GATEWAY=paylink
-PAYMENT_TEST_MODE=true
-
-PAYLINK_API_KEY=your_api_key_here
-PAYLINK_SECRET_KEY=your_secret_key_here
-PAYLINK_API_URL=[https://api.paylink.sa](https://api.paylink.sa)
-PAYLINK_SANDBOX_URL=[https://sandbox.paylink.sa](https://sandbox.paylink.sa)
+# Moyasar Configuration
+MOYASAR_API_URL=[https://api.moyasar.com/v1](https://api.moyasar.com/v1)
+MOYASAR_API_KEY=pk_test_... # المفتاح العام (Publishable Key)
+MOYASAR_SECRET_KEY=sk_test_... # المفتاح السري (Secret Key)
 ```
-
 ---
 
 ### 👩‍💻 تطوير وإعداد
