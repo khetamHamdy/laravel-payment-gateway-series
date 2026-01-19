@@ -9,4 +9,5 @@ Route::prefix('test/payment')->group(function () {
     Route::get('/checkout', [PaymentTestController::class, 'checkout']);
     Route::post('/webhook/{gateway}', [PaymentTestController::class, 'webhook'])
         ->name('payment.webhook');
+    Route::get('/success', [PaymentTestController::class, 'success'])->name('payment.success');
 });

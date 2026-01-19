@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id');
 
             // المرجع الفريد الذي سنرسله لـ Paylink
             $table->string('payment_reference')->unique();

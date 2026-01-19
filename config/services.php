@@ -48,6 +48,12 @@ return [
         'secret_key' => env('PAYLINK_SECRET_KEY'),
     ],
 
+    'moyasar' => [
+        'secret_key' => env('MOYASAR_SECRET_KEY'),
+        'api_key' => env('MOYASAR_API_KEY'),
+        'api_url' => env('MOYASAR_API_URL'),
+    ],
+
     'telr' => [
         'api_url'      => env('TELR_API_URL'),
         'store_id'     => env('TELR_STORE_ID'),
