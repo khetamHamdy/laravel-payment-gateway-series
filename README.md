@@ -1,11 +1,11 @@
-<img width="1537" height="726" alt="Screenshot 2026-01-30 221647" src="https://github.com/user-attachments/assets/cf108fe6-c3df-4b82-8261-5b99c2a65bd7" /># Laravel HyperPay Payment Gateway Integration (Copy-and-Pay) 💳
+# Laravel HyperPay Payment Gateway Integration (Copy-and-Pay) 💳
 
 ![Laravel](https://img.shields.io/badge/Laravel-10.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![HyperPay](https://img.shields.io/badge/HyperPay-v1.0-green?style=for-the-badge)
 ![PHP](https://img.shields.io/badge/PHP-8.1+-777BB4?style=for-the-badge&logo=php&logoColor=white)
 
 مستودع برمجي متكامل يوضح كيفية دمج بوابة دفع **HyperPay** في تطبيقات Laravel باستخدام نمط **Copy-and-Pay**. تم بناء هذا المشروع ليكون مرجعاً للمبرمجين الساعين لتنفيذ حلول دفع آمنة واحترافية.
-
+<img width="1000" height="700" alt="Screenshot 2026-01-30 221647" src="https://github.com/user-attachments/assets/cf108fe6-c3df-4b82-8261-5b99c2a65bd7" />
 ---
 
 ## 🏗️ البنية البرمجية (Architecture)
@@ -60,10 +60,8 @@ HYPERPAY_ACCESS_TOKEN=OGE4Mjk0...
 HYPERPAY_TEST_MODE=EXTERNAL
 
 ثم قم بتشغيل الأمر التالي لتحديث الإعدادات:
-``` php artisan config:clear
----
-<img width="1537" height="726" alt="Screenshot 2026-01-30 221647" src="https://github.com/user-attachments/assets/4fa4f7c2-3677-40a8-a0ae-79cae9e1220b" />
-
+ php artisan config:clear
+```
 ---
 
 ### 👩‍💻 تطوير وإعداد
@@ -71,3 +69,5 @@ HYPERPAY_TEST_MODE=EXTERNAL
 
 # صدقة جارية عن روح والدي الشهيد حمدي اخليل
  اللهم ارحمه وتقبله في الشهداء واجعل مسكنه الفردوس الأعلى من الجنة
+
+
