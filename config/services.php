@@ -61,9 +61,27 @@ return [
         'test_mode'    => env('TELR_TEST_MODE', true)
     ],
 
-    'currencyfreaks' => [
-        'key' => env('CURRENCYFREAKS_KEY'),
+/*
+    |--------------------------------------------------------------------------
+    | HyperPay Gateway Configuration
+    |--------------------------------------------------------------------------
+    |
+    | هنا نقوم بضبط إعدادات بوابة هايبر باي.
+    | التوثيق يتطلب رابط مختلف ومفاتيح مختلفة حسب وضع البيئة (Sandbox/Production).
+    |
+    */
+
+    'hyperpay' => [
+        // الرابط الافتراضي هو Sandbox لضمان الأمان أثناء التطوير
+        'api_url'      => env('HYPERPAY_BASE_URL', 'https://eu-test.oppwa.com'),
+        'entity_id'    => env('HYPERPAY_ENTITY_ID'),
+        'access_token' => env('HYPERPAY_ACCESS_TOKEN'),
+
+        /**
+         * وضع الاختبار (testMode)
+         * يفضل وضعه في ملف الـ .env ليتم إرساله في طلب الـ Checkout والـ Widget
+         * القيم المتاحة: EXTERNAL (للتجربة) أو نتركه فارغاً للإنتاج
+         */
+        'test_mode'    => env('HYPERPAY_TEST_MODE', 'EXTERNAL'),
     ],
-
-
 ];

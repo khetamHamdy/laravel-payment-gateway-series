@@ -1,59 +1,67 @@
-# Laravel Moyasar Payment Gateway Implementation 💳
+# Laravel HyperPay Payment Gateway Integration (Copy-and-Pay) 💳
 
 ![Laravel](https://img.shields.io/badge/Laravel-10.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
-![Moyasar](https://img.shields.io/badge/Moyasar-API_V1-blue?style=for-the-badge)
+![HyperPay](https://img.shields.io/badge/HyperPay-v1.0-green?style=for-the-badge)
+![PHP](https://img.shields.io/badge/PHP-8.1+-777BB4?style=for-the-badge&logo=php&logoColor=white)
 
-مستودع تعليمي يوضح كيفية دمج بوابة دفع **Moyasar (ميسر)** في تطبيقات Laravel باستخدام بنية برمجية نظيفة (Clean Architecture) تعتمد على الـ **Service Pattern**.
-
----
-
-## 🚀 تدفق عملية الدفع (Payment Flow)
-
-يعتمد هذا المشروع على هيكلية قوية تضمن أمان العمليات المالية عبر المراحل التالية:
-
-
-
-1.  **Checkout:** يتم إنشاء سجل دفع محلي بوضع `pending` في قاعدة البيانات، ثم طلب إنشاء فاتورة (Invoice) من ميسر.
-2.  **Redirection:** يتم توجيه العميل إلى رابط الفاتورة المولد من بوابة ميسر لإتمام عملية الدفع.
-3.  **Validation:** عند العودة (`Success Page`) أو عبر الـ `Webhook` يتم التحقق المباشر من سيرفر ميسر عبر الـ API قبل تحديث حالة الطلب لضمان عدم تلاعب المستخدم بالبيانات.
+مستودع برمجي متكامل يوضح كيفية دمج بوابة دفع **HyperPay** في تطبيقات Laravel باستخدام نمط **Copy-and-Pay**. تم بناء هذا المشروع ليكون مرجعاً للمبرمجين الساعين لتنفيذ حلول دفع آمنة واحترافية.
 
 ---
 
-## 🛠️ المميزات التقنية (Technical Features)
+## 🏗️ البنية البرمجية (Architecture)
 
-* ✅ **Service-Oriented Architecture:** فصل منطق بوابة الدفع بالكامل داخل `MoyasarGateway` بعيداً عن الكنترولر.
-* ✅ **Database Transactions:** استخدام `DB::transaction` مع `lockForUpdate` عند تحديث حالة الدفع لمنع الـ Race Conditions.
-* ✅ **Double Verification:** التحقق من حالة الدفع عبر استدعاء API ميسر مباشرة من السيرفر (Server-to-Server) لضمان الأمان العالي.
-* ✅ **Robust Logging:** نظام تسجيل أحداث (Logging) دقيق لكل مرحلة من مراحل الدفع لتسهيل عملية التتبع (Debugging).
+يعتمد المشروع على **Service Pattern** لفصل منطق الربط عن الـ Controllers، مما يسهل عملية الصيانة والاختبار:
 
----
-
-## 📂 الهيكل البرمجي (Key Components)
-
-### 1️⃣ المسارات (Routes)
-تم تنظيم المسارات باستخدام `prefix` لتسهيل الاختبار والوصول:
-* `GET /test/payment/checkout`: لبدء المعاملة وإنشاء الرابط.
-* `POST /test/payment/webhook/{gateway}`: لاستقبال الإشعارات التلقائية من ميسر.
-* `GET /test/payment/success`: لمعالجة عودة العميل وتأكيد حالة الدفع النهائية.
-
-### 2️⃣ المتحكم (PaymentTestController)
-المسؤول عن التنسيق بين واجهة المستخدم، الخدمة (Service)، وقاعدة البيانات، مع ضمان معالجة الأخطاء بشكل سليم.
-
-### 3️⃣ الخدمة (MoyasarGateway)
-المحرك الرئيسي الذي يتواصل مع API ميسر، ويقوم ببناء الـ Payload، ومعالجة الـ Webhooks، وتوحيد استجابة النظام.
+- **Gateway Service:** كلاس `HyperPayGateway` هو المسؤول الوحيد عن التحدث مع HyperPay API.
+- **Contract-Based:** استخدام `PaymentGatewayInterface` لضمان مرونة النظام وقابليته للتوسع لإضافة بوابات دفع أخرى مستقبلاً.
+- **Transactional Integrity:** استخدام معاملات قاعدة البيانات (Database Transactions) لضمان عدم ضياع أي بيانات مالية.
 
 ---
 
-## ⚙️ الإعدادات (.env)
+## 🚀 تدفق عملية الدفع (The 3-Step Flow)
 
-يتم جلب الإعدادات برمجياً من ملف `config/services.php`. تأكد من إضافة القيم التالية في ملف الـ `.env`:
+تم تطبيق دورة حياة الدفع حسب المعايير الرسمية لـ HyperPay:
+
+1.  **المرحلة الأولى (Prepare Checkout):** يقوم السيرفر بإنشاء طلب دفع واستلام `Checkout ID` فريد.
+2.  **المرحلة الثانية (Payment Widget):** يتم حقن الـ Payment Widget في واجهة المستخدم ليقوم العميل بإدخال بيانات بطاقته بأمان.
+3.  **المرحلة الثالثة (Verification):** بمجرد عودة العميل، يتم إجراء تحقق (Server-to-Server) للتأكد من حالة العملية قبل تحديث سجلات النظام.
+
+---
+
+## 🛠️ المميزات التقنية (Technical Highlights)
+
+- 🔒 **Security:** دعم خاصية الـ `integrity` لضمان سلامة البيانات من التلاعب.
+- 📡 **Webhooks:** معالجة التنبيهات الخلفية لتحديث حالة الطلبات بشكل تلقائي وآمن.
+- 📊 **Logging:** نظام تتبع كامل للأخطاء والردود القادمة من البوابة لسهولة الـ Debugging.
+- 📱 **Responsive Widget:** واجهة دفع متجاوبة مع كافة الشاشات.
+
+---
+
+## 📂 مكونات المشروع الأساسية
+
+| الملف | الوصف |
+| :--- | :--- |
+| `app/Services/Billing/Gateways/HyperPayGateway.php` | المحرك الرئيسي للاتصال بـ API هايبر باي |
+| `app/Http/Controllers/Payment/PaymentTestController.php` | المتحكم في سير العمليات (Logic Flow) |
+| `resources/views/payment.blade.php` | واجهة العرض التي تستضيف نموذج الدفع |
+| `routes/web.php` | تعريف مسارات العودة والـ Webhook |
+
+---
+
+## ⚙️ متطلبات التشغيل (Configuration)
+
+أضف الإعدادات التالية في ملف `.env` الخاص بك:
 
 ```env
-# Moyasar Configuration
-MOYASAR_API_URL=[https://api.moyasar.com/v1](https://api.moyasar.com/v1)
-MOYASAR_API_KEY=pk_test_... # المفتاح العام (Publishable Key)
-MOYASAR_SECRET_KEY=sk_test_... # المفتاح السري (Secret Key)
-```
+# HyperPay Credentials
+HYPERPAY_BASE_URL=[https://eu-test.oppwa.com](https://eu-test.oppwa.com)
+HYPERPAY_ENTITY_ID=8a829417...
+HYPERPAY_ACCESS_TOKEN=OGE4Mjk0...
+HYPERPAY_TEST_MODE=EXTERNAL
+
+ثم قم بتشغيل الأمر التالي لتحديث الإعدادات:
+``` php artisan config:clear
+
 ---
 
 ### 👩‍💻 تطوير وإعداد

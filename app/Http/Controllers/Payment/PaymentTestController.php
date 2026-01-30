@@ -5,141 +5,154 @@ namespace App\Http\Controllers\Payment;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
-use App\Services\Billing\Gateways\MoyasarGateway;
+use App\Services\Billing\Gateways\HyperPayGateway;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * PaymentTestController
+ * * المتحكم المسؤول عن اختبار دورة دفع HyperPay الكاملة.
+ * يشمل: طلب الدفع، استقبال العميل بعد الدفع، ومعالجة التنبيهات الخلفية (Webhooks).
+ */
 class PaymentTestController extends Controller
 {
     /**
-     * المرحلة الأولى: إنشاء سجل الدفع وتوجيه العميل لبوابة ميسر
+     * الخطوة 1: بدء عملية الدفع (Checkout)
+     * * تنشئ سجلاً في قاعدة البيانات وتطلب Checkout ID من هايبر باي.
      */
-    public function checkout(MoyasarGateway $gateway)
+    public function checkout(HyperPayGateway $gateway)
     {
-        Log::info('[Checkout] بدء عملية دفع جديدة لليوزر: ' . (Auth::id() ?? 'Guest'));
-
-        // 1. إنشاء سجل دفع بانتظار التنفيذ (Pending)
+        // 1. إنشاء سجل المعاملة محلياً بحالة 'pending'
         $payment = Payment::create([
-            'user_id'   => Auth::id() ?? 1,
-            'amount'    => 100.00,
-            'currency'  => 'SAR',
-            'gateway'   => 'moyasar',
-            'status'    => 'pending',
+            'user_id'  => Auth::id() ?? 1, // تجريبي: نستخدم ID 1 إذا لم يكن هناك تسجيل دخول
+            'amount'   => 100.00,
+            'currency' => 'SAR',
+            'gateway'  => 'hyperpay',
+            'status'   => 'pending',
         ]);
 
-        // 2. تجهيز البيانات المطلوبة لميسر
+        // 2. تجهيز البيانات المطلوبة للبوابة
         $payload = [
-            'amount'       => (int) ($payment->amount * 100), // تحويل للهللة
-            'currency'     => $payment->currency,
-            'description'  => 'Payment #' . $payment->id,
-            'callback_url' => route('payment.webhook', ['gateway' => 'moyasar']),
-            'success_url'  => route('payment.success', ['payment_id' => $payment->id]),
-            'metadata'     => [
-                'payment_id' => $payment->id, // لحفظ العلاقة في ميسر
-            ],
+            'amount'     => $payment->amount,
+            'currency'   => $payment->currency,
+            // نمرر الـ payment_id في الرابط لنعرف أي طلب نحدث عند العودة
+            'result_url' => route('payment.result', ['payment_id' => $payment->id]),
         ];
 
-        // 3. طلب رابط الدفع من الخدمة
+        // 3. الاتصال بـ HyperPay (Step 1 الرسمي في التوثيق)
         $response = $gateway->createCheckout(
             customer: Auth::user(),
             product: null,
-            transaction: $payment, // نمرر السجل بدلاً من null
+            transaction: $payment,
             options: ['payload' => $payload]
         );
 
-        if ($response['success']) {
-            $payment->update(['transaction_id' => $response['transaction_id']]);
-            Log::info("[Checkout] تم توليد رابط الدفع بنجاح: " . $response['transaction_id']);
 
+        if (!$response['success']) {
             return response()->json([
-                'status'      => 'success',
+                'error_from_gateway' => $response['error'] ?? 'Unknown Error',
+                'full_response' => $response['raw'] ?? 'No raw data'
+            ], 400);
+        }
+
+        // 4. تحديث السجل بـ checkout_id المستلم لاستخدامه في التحقق لاحقاً
+        $payment->update(['transaction_id' => $response['checkout_id']]);
+
+        // 5. إرجاع البيانات (عادةً يتم توجيه المستخدم لصفحة تحتوي على الـ Payment Widget)
+        // return response()->json([
+        //     'status'      => 'success',
+        //     'checkout_id' => $response['checkout_id'],
+        //     'payment_url' => $response['payment_url'],
+        // ]);
+
+        if ($response['success']) {
+            $payment->update(['transaction_id' => $response['checkout_id']]);
+
+            return view('payment', [
                 'payment_url' => $response['payment_url'],
+                'payment_id'  => $payment->id,
+                'amount'      => $payment->amount,
+                'currency'    => $payment->currency
             ]);
         }
-
-        Log::error('[Checkout] فشل في إنشاء رابط الدفع: ' . ($response['error'] ?? 'Unknown error'));
-        return response()->json($response, 400);
     }
 
     /**
-     * المرحلة الثانية: استقبال إشعار ميسر (Webhook) وتحديث قاعدة البيانات
-     * ملاحظة: يتم الاستدعاء من خادم ميسر مباشرة
+     * الخطوة 2 و 3: معالجة العودة من البوابة (Result URL)
+     * * يتم توجيه المستخدم هنا تلقائياً بعد إدخال بيانات البطاقة.
      */
-    public function webhook(Request $request)
+    public function result(Request $request, HyperPayGateway $gateway)
     {
-        $moyasarId = $request->input('id');
-        Log::info("[Webhook] استقبال إشعار دفع من ميسر للمعرف: $moyasarId");
+        $checkoutId = $request->get('id'); // يرسل تلقائياً من هايبر باي
+        $paymentId  = $request->get('payment_id'); // مرسل من قبلنا في الـ result_url
 
-        // 1. التحقق من صحة المعاملة من سيرفر ميسر (أمان إضافي)
-        $response = Http::withBasicAuth(config('services.moyasar.secret_key'), '')
-            ->get("https://api.moyasar.com/v1/payments/{$moyasarId}");
-
-        if ($response->failed()) {
-            Log::error("[Webhook] فشل التحقق من الفاتورة $moyasarId من سيرفر ميسر.");
-            return response()->json(['message' => 'Unauthorized'], 401);
+        if (!$checkoutId || !$paymentId) {
+            return response()->view('payment.error', ['message' => 'بيانات الدفع غير مكتملة']);
         }
 
-        $data = $response->json();
-        $paymentId = $data['metadata']['payment_id'] ?? null;
+        $payment = Payment::find($paymentId);
+        if (!$payment) return 'Transaction not found ❌';
 
-        // 2. تحديث السجل باستخدام Transaction لضمان سلامة البيانات
-        DB::transaction(function () use ($paymentId, $data) {
-            $payment = Payment::lockForUpdate()->find($paymentId);
+        // الاتصال بالسيرفر للتأكد من حالة العملية (Step 3 الرسمي)
+        $verify = $gateway->verifyPayment($checkoutId);
 
-            if ($payment && $data['status'] === 'paid' && $payment->status !== 'completed') {
-                $payment->markAsCompleted($data['id'], $data);
-                Log::info("[Webhook] تم تحديث حالة الطلب $paymentId إلى 'مكتمل'.");
-            }
-        });
+        if ($verify['success']) {
+            DB::transaction(function () use ($payment, $verify) {
+                // نحدث الحالة فقط إذا لم تكن مكتملة (لتجنب تكرار العمليات)
+                if ($payment->status !== 'completed') {
+                    $payment->markAsCompleted(
+                        data_get($verify['data'], 'id'), // رقم العملية في هايبر باي
+                        $verify['data'] // كامل بيانات الرد للحفظ
+                    );
+                }
+            });
 
-        return response()->json(['status' => 'ok']);
+            return redirect()->route('payment.success', ['payment_id' => $payment->id]);
+        }
+
+        Log::warning("[HyperPay] Payment Failed for ID: {$paymentId}", ['verify_response' => $verify]);
+        return 'Payment Failed: ' . ($verify['message'] ?? 'Unknown Error');
     }
 
     /**
-     * المرحلة الثالثة: صفحة العودة (Success Page)
-     * ملاحظة: هنا نتأكد من حالة الدفع قبل إظهار رسالة النجاح للمستخدم
+     * صفحة النجاح النهائية
      */
-  public function success(Request $request)
-{
-    $paymentId = $request->query('id'); // معرف ميسر
-    $localPaymentId = $request->query('payment_id'); // معرفنا المحلي
+    public function success(Request $request)
+    {
+        $payment = Payment::find($request->get('payment_id'));
 
-    Log::info("[SuccessPage] User returned", ['moyasar_id' => $paymentId, 'local_id' => $localPaymentId]);
+        if (!$payment) return 'Payment record missing ❌';
 
-    $payment = Payment::find($localPaymentId);
-    if (!$payment) return 'Payment not found ❌';
-
-    // 1. التحقق من وجود المعرف لتجنب طلب API خاطئ
-    if (!$paymentId) {
-        Log::warning("[SuccessPage] No payment ID provided in URL");
-        return 'Invalid response from gateway ❌';
+        return $payment->status === 'completed'
+            ? 'Success: تم تأكيد الدفع بنجاح ✅'
+            : 'Pending: العملية قيد المعالجة ⏳';
     }
 
-    // 2. التحقق من سيرفر ميسر
-    $response = Http::withBasicAuth(config('services.moyasar.secret_key'), '')
-                    ->get("https://api.moyasar.com/v1/payments/{$paymentId}");
+    /**
+     * الخطوة 4: التنبيهات الخلفية (Webhook)
+     * * تضمن تحديث حالة الطلب حتى لو أغلق العميل المتصفح قبل العودة للموقع.
+     */
+    public function webhook(Request $request, HyperPayGateway $gateway)
+    {
+        $result = $gateway->handleWebhook($request);
 
-    if ($response->successful()) {
-        $data = $response->json();
+        if ($result['success']) {
+            // نبحث عن المعاملة باستخدام الـ checkout_id
+            $payment = Payment::where('transaction_id', $result['checkout_id'])->first();
 
-        // 3. التأكد من وجود مفتاح status قبل المقارنة (أهم خطوة لمنع الـ Undefined array key)
-        $status = $data['status'] ?? null;
-
-        if ($status === 'paid') {
-            if ($payment->status !== 'completed') {
-                $payment->markAsCompleted($data['id'], $data);
+            if ($payment && $payment->status !== 'completed') {
+                DB::transaction(function () use ($payment, $result) {
+                    $payment->markAsCompleted(
+                        data_get($result['data'], 'id'),
+                        $result['data']
+                    );
+                });
+                Log::info("[HyperPay Webhook] Order updated successfully: {$payment->id}");
             }
-            return 'Payment Successful ✅';
         }
 
-        if ($status === 'failed') {
-            return 'Payment Failed: ' . ($data['source']['message'] ?? 'Unknown error') . ' ❌';
-        }
+        // هايبر باي تتوقع دائماً رد 200 لتتوقف عن إعادة المحاولة
+        return response()->json(['status' => 'received']);
     }
-
-    Log::error("[SuccessPage] Moyasar verification failed", ['response' => $response->json()]);
-    return 'Payment is pending or failed ⏳';
-}
 }
