@@ -1,4 +1,4 @@
-# Laravel HyperPay Payment Gateway Integration (Copy-and-Pay) 💳
+<img width="1537" height="726" alt="Screenshot 2026-01-30 221647" src="https://github.com/user-attachments/assets/cf108fe6-c3df-4b82-8261-5b99c2a65bd7" /># Laravel HyperPay Payment Gateway Integration (Copy-and-Pay) 💳
 
 ![Laravel](https://img.shields.io/badge/Laravel-10.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![HyperPay](https://img.shields.io/badge/HyperPay-v1.0-green?style=for-the-badge)
@@ -61,6 +61,8 @@ HYPERPAY_TEST_MODE=EXTERNAL
 
 ثم قم بتشغيل الأمر التالي لتحديث الإعدادات:
 ``` php artisan config:clear
+---
+<img width="1537" height="726" alt="Screenshot 2026-01-30 221647" src="https://github.com/user-attachments/assets/4fa4f7c2-3677-40a8-a0ae-79cae9e1220b" />
 
 ---
 
